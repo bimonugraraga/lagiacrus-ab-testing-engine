@@ -2,6 +2,7 @@ package abtestingengine
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"strconv"
@@ -10,16 +11,16 @@ import (
 	"github.com/redis/go-redis/v9"
 )
 
-func (a *Analytics) GetAnalytics(ctx context.Context, redisClient *redis.Client) (ResultAnalytics, error) {
+func (e *Experiment) GetAnalytics(ctx context.Context, redisClient *redis.Client) (ResultAnalytics, error) {
 	if redisClient == nil {
 		return ResultAnalytics{}, errors.New("redis client is nil")
 	}
 
 	// Generate Key
-	keyConversion := keyGeneratorUserConversionAnalytics(a.ExperimentID)
-	keyExposure := keyGeneratorUserExposureAnalytics(a.ExperimentID)
-	keyExperimentDetail := keyGeneratorExpiredTime(a.ExperimentID)
-	keyExpiredTime := keyGeneratorExpiredTime(a.ExperimentID)
+	keyConversion := keyGeneratorUserConversionAnalytics(e.ID)
+	keyExposure := keyGeneratorUserExposureAnalytics(e.ID)
+	keyExperimentDetail := keyGeneratorExperimentDetail(e.ID)
+	keyExpiredTime := keyGeneratorExpiredTime(e.ID)
 
 	// Get Conversion
 	conversion, err := redisClient.HGetAll(ctx, keyConversion).Result()
@@ -52,13 +53,41 @@ func (a *Analytics) GetAnalytics(ctx context.Context, redisClient *redis.Client)
 	localStr := tLocal.Format("2006-01-02 15:04")
 
 	// Parse Detail
-	variants := detail.([]Variant)
+	err = json.Unmarshal([]byte(detail), e)
+	if err != nil {
+		return ResultAnalytics{}, err
+	}
 
-	fmt.Println(conversion, exposure, ttl, detail)
+	// Conversion
+	fmt.Println(conversion, exposure)
+	conversionResult := make([]map[any]any, len(e.Variants))
+	for i, variant := range e.Variants {
+		conversionResult[i] = make(map[any]any)
+		conversionResult[i]["id"] = variant.ID
+		conversionResult[i]["conversion"], _ = strconv.Atoi(conversion[variant.ID])
+	}
+
+	// Exposure
+	exposureResult := make([]map[any]any, len(e.Variants))
+	for i, variant := range e.Variants {
+		exposureResult[i] = make(map[any]any)
+		exposureResult[i]["id"] = variant.ID
+		exposureResult[i]["exposure"], _ = strconv.Atoi(exposure[variant.ID])
+	}
+
+	// Conversion Rate
+	conversionRate := make([]map[any]any, len(e.Variants))
+	for i, variant := range e.Variants {
+		conversionRate[i] = make(map[any]any)
+		conversionRate[i]["id"] = variant.ID
+		conversionRate[i]["conversion_rate"] = fmt.Sprintf("%.4f", float64(conversionResult[i]["conversion"].(int))/float64(exposureResult[i]["exposure"].(int)))
+	}
 
 	res := ResultAnalytics{
-		ExperimentID: a.ExperimentID,
-
+		ExperimentID:   e.ID,
+		Variants:       e.Variants,
+		Conversion:     conversionResult,
+		Exposure:       exposureResult,
 		ExpiredOnLocal: localStr,
 		ExpiredOnUTC:   utcStr,
 	}

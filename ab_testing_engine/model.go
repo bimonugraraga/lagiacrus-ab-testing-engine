@@ -3,14 +3,14 @@ package abtestingengine
 import "fmt"
 
 type Variant struct {
-	ID     string
-	Name   string
-	Weight int
+	ID     string `json:"id"`
+	Name   string `json:"name"`
+	Weight int    `json:"weight"`
 }
 
 type Experiment struct {
-	ID       string
-	Variants []Variant
+	ID       string    `json:"id"`
+	Variants []Variant `json:"variants"`
 }
 
 // type ResultBulkInt struct {
@@ -24,16 +24,12 @@ type UserConversion struct {
 	VariantID    any
 }
 
-type Analytics struct {
-	ExperimentID string
-}
-
 type ResultAnalytics struct {
 	ExperimentID   string
 	Variants       []Variant
-	Exposure       map[any]int
-	Conversion     map[any]int
-	ConversionRate map[any]float64
+	Exposure       []map[any]any
+	Conversion     []map[any]any
+	ConversionRate []map[any]any
 	ExpiredOnLocal string
 	ExpiredOnUTC   string
 }
