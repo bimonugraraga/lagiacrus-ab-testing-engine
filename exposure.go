@@ -3,7 +3,6 @@ package abtestingengine
 import (
 	"context"
 	"errors"
-	"fmt"
 	"strconv"
 	"time"
 
@@ -77,7 +76,6 @@ func (u *UserConversion) ExposedUser(ctx context.Context, redisClient *redis.Cli
 	keyUserExposureAnalytics := keyGeneratorUserExposureAnalytics(u.ExperimentID)
 
 	indexes := bloomIndexes(u.ExperimentID, u.UserID, BloomIndexK, BloomIndexM)
-	fmt.Println(indexes)
 	args := make([]interface{}, 0, len(indexes)+2)
 
 	for _, idx := range indexes {
@@ -96,7 +94,6 @@ func (u *UserConversion) ExposedUser(ctx context.Context, redisClient *redis.Cli
 		args...,
 	).Result()
 	if err != nil {
-		fmt.Println(">>>>>>>>>>>", err)
 		return err
 	}
 	return nil

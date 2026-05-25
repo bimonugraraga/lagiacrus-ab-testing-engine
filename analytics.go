@@ -59,7 +59,6 @@ func (e *Experiment) GetAnalytics(ctx context.Context, redisClient *redis.Client
 	}
 
 	// Conversion
-	fmt.Println(conversion, exposure)
 	conversionResult := make([]map[any]any, len(e.Variants))
 	for i, variant := range e.Variants {
 		conversionResult[i] = make(map[any]any)
@@ -88,6 +87,7 @@ func (e *Experiment) GetAnalytics(ctx context.Context, redisClient *redis.Client
 		Variants:       e.Variants,
 		Conversion:     conversionResult,
 		Exposure:       exposureResult,
+		ConversionRate: conversionRate,
 		ExpiredOnLocal: localStr,
 		ExpiredOnUTC:   utcStr,
 	}

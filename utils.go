@@ -7,7 +7,6 @@ import (
 
 func bloomIndexes(experimentID, userID any, k int, m uint64) []uint64 {
 	base := hash64(fmt.Sprintf("%v:%v", experimentID, userID))
-	fmt.Println(">>>>>>>>>>>", base)
 
 	indexes := make([]uint64, k)
 

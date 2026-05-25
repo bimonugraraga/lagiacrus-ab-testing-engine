@@ -13,10 +13,13 @@ type Experiment struct {
 	Variants []Variant `json:"variants"`
 }
 
-// type ResultBulkInt struct {
-// 	UserID  []int64
-// 	Variant VariantInt
-// }
+type ResultAssignBulk struct {
+	ResultsBulk map[string]ResultBulk
+}
+type ResultBulk struct {
+	UserID  []string
+	Variant Variant
+}
 
 type UserConversion struct {
 	UserID       any
