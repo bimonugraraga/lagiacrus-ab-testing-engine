@@ -3,7 +3,6 @@ package abtestingengine
 import (
 	"context"
 	"errors"
-	"fmt"
 	"strconv"
 	"time"
 
@@ -126,7 +125,6 @@ func (u *UserConversion) ConversionUser(ctx context.Context, redisClient *redis.
 		args...,
 	).Int()
 	if err != nil {
-		fmt.Println("convertUserLua error:", err)
 		return err
 	}
 

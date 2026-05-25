@@ -22,9 +22,9 @@ type ResultBulk struct {
 }
 
 type UserConversion struct {
-	UserID       any
-	ExperimentID any
-	VariantID    any
+	UserID       string
+	ExperimentID string
+	VariantID    string
 }
 
 type ResultAnalytics struct {
@@ -37,30 +37,30 @@ type ResultAnalytics struct {
 	ExpiredOnUTC   string
 }
 
-func keyGeneratorExperimentDetail(experimentID any) string {
-	return fmt.Sprintf("lagiacrus:experiment:{%v}", experimentID)
+func keyGeneratorExperimentDetail(experimentID string) string {
+	return fmt.Sprintf("lagiacrus:experiment:{%s}", experimentID)
 }
-func keyGeneratorExpiredTime(experimentID any) string {
-	return fmt.Sprintf("lagiacrus:experiment:{%v}:expired_time", experimentID)
-}
-
-func keyGeneratorUserExposureLock(experimentID any) string {
-	return fmt.Sprintf("lagiacrus:experiment:{%v}:exposure_lock", experimentID)
+func keyGeneratorExpiredTime(experimentID string) string {
+	return fmt.Sprintf("lagiacrus:experiment:{%s}:expired_time", experimentID)
 }
 
-func keyGeneratorUserExposureAnalytics(experimentID any) string {
-	return fmt.Sprintf("lagiacrus:experiment:{%v}:exposure", experimentID)
+func keyGeneratorUserExposureLock(experimentID string) string {
+	return fmt.Sprintf("lagiacrus:experiment:{%s}:exposure_lock", experimentID)
 }
 
-func keyGeneratorUserConversionLock(experimentID any) string {
-	return fmt.Sprintf("lagiacrus:experiment:{%v}:conversion_lock", experimentID)
+func keyGeneratorUserExposureAnalytics(experimentID string) string {
+	return fmt.Sprintf("lagiacrus:experiment:{%s}:exposure", experimentID)
+}
+
+func keyGeneratorUserConversionLock(experimentID string) string {
+	return fmt.Sprintf("lagiacrus:experiment:{%s}:conversion_lock", experimentID)
 }
 
 func keyGeneratorUserConversionAnalytics(experimentID any) string {
 	return fmt.Sprintf("lagiacrus:experiment:{%v}:conversion", experimentID)
 }
 
-func GetListOfAllKeysFormat(experimentID any) []string {
+func GetListOfAllKeysFormat(experimentID string) []string {
 	return []string{
 		keyGeneratorUserExposureLock(experimentID),
 		keyGeneratorUserExposureAnalytics(experimentID),

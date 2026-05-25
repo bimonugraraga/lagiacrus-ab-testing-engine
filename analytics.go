@@ -79,7 +79,13 @@ func (e *Experiment) GetAnalytics(ctx context.Context, redisClient *redis.Client
 	for i, variant := range e.Variants {
 		conversionRate[i] = make(map[any]any)
 		conversionRate[i]["id"] = variant.ID
-		conversionRate[i]["conversion_rate"] = fmt.Sprintf("%.4f", float64(conversionResult[i]["conversion"].(int))/float64(exposureResult[i]["exposure"].(int)))
+		conv := float64(conversionResult[i]["conversion"].(int))
+		expo := float64(exposureResult[i]["exposure"].(int))
+		if expo == 0 {
+			conversionRate[i]["conversion_rate"] = "0.0000"
+			continue
+		}
+		conversionRate[i]["conversion_rate"] = fmt.Sprintf("%.4f", conv/expo)
 	}
 
 	res := ResultAnalytics{
