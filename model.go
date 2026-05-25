@@ -59,3 +59,12 @@ func keyGeneratorUserConversionLock(experimentID any) string {
 func keyGeneratorUserConversionAnalytics(experimentID any) string {
 	return fmt.Sprintf("lagiacrus:experiment:{%v}:conversion", experimentID)
 }
+
+func GetListOfAllKeysFormat(experimentID any) []string {
+	return []string{
+		keyGeneratorUserExposureLock(experimentID),
+		keyGeneratorUserExposureAnalytics(experimentID),
+		keyGeneratorUserConversionLock(experimentID),
+		keyGeneratorUserConversionAnalytics(experimentID),
+	}
+}

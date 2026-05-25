@@ -377,6 +377,36 @@ Keys created (prefix `lagiacrus:experiment`):
 - `lagiacrus:experiment:{<experimentID>}:conversion_lock`: bitmap for conversion de-duplication (TTL matches expiry)
 - `lagiacrus:experiment:{<experimentID>}:conversion`: hash counter variant → conversion count (TTL matches expiry)
 
+### GetListOfAllKeysFormat
+
+Helper to list the Redis keys used for exposure + conversion for a given experiment ID.
+
+Signature:
+
+```go
+func GetListOfAllKeysFormat(experimentID any) []string
+```
+
+Parameter types:
+
+- `experimentID`: `any` (commonly `string`; must match the type/value you use elsewhere as the experiment ID)
+- Return: `[]string` (key names)
+
+Example:
+
+```go
+var experimentID string = "exp_checkout_button"
+keys := abtestingengine.GetListOfAllKeysFormat(experimentID)
+fmt.Println(keys)
+```
+
+Returns these formats:
+
+- `lagiacrus:experiment:{<experimentID>}:exposure_lock`
+- `lagiacrus:experiment:{<experimentID>}:exposure`
+- `lagiacrus:experiment:{<experimentID>}:conversion_lock`
+- `lagiacrus:experiment:{<experimentID>}:conversion`
+
 ## Bloom/Bitmap Sizing
 
 The bitmap size is controlled by `BloomIndexK` and `BloomIndexM` in the package constants. `BloomIndexM` is in bits; Redis memory usage will depend on how the bitmap expands and Redis’ internal encoding, but the upper bound is roughly `BloomIndexM / 8` bytes.
